@@ -259,10 +259,16 @@
             </div>
 
             <div class="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-sm space-y-6">
-                <!-- Eingefügtes Bild: Poster Neorealismus -->
+                <!-- Eingefügtes Bild mit Klick-Funktion für Zoom -->
                 <div class="text-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    <img src="Poster Neorealismus.pdf" alt="Poster Neorealismus" class="mx-auto max-h-80 rounded-xl shadow-sm object-contain" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Poster+Neorealismus'">
-                    <p class="text-xs text-slate-500 mt-2 italic">Visuelles Material zur 4. Sitzung (Poster Neorealismus)</p>
+                    <div class="cursor-pointer group inline-block relative overflow-hidden rounded-xl shadow-sm border border-slate-200"
+                         @click="modalOpen = true; modalImgSrc = 'poster-neorealismus.jpg'">
+                        <img src="Poster Neorealismus.jpg" alt="Poster Neorealismus" class="max-h-80 object-contain group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Poster+Neorealismus'">
+                        <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-semibold gap-1">
+                            🔍 Zum Vergrößern klicken
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2 italic">Visuelles Material zur 4. Sitzung (Poster Neorealismus) - Klicke zum Vergrößern</p>
                 </div>
 
                 <div>
@@ -283,6 +289,45 @@
                         </div>
                         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                             <strong class="text-slate-900">3. Synthese:</strong> Beide Ansätze ergänzen sich: Realistische Faktoren bestimmen oft den kurzfristigen Überlebenskampf, während konstruktivistische Faktoren den langfristigen Wandel erklären.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ZUSAMMENFASSUNG: SITZUNG 5 -->
+    <section id="sitzung5" class="py-20 bg-white border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="text-center">
+                <span class="text-xs font-semibold uppercase tracking-wider text-purple-600 bg-purple-100 px-3 py-1 rounded-full">Sitzungsprotokoll</span>
+                <h2 class="font-serif text-3xl font-bold text-slate-900 mt-4 mb-2">
+                    Zusammenfassung der 5. Sitzung
+                </h2>
+                <p class="text-slate-600">
+                    Vertiefung an Fallbeispielen, internationale Organisationen und globale Krisen.
+                </p>
+            </div>
+
+            <div class="bg-slate-50 rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-sm space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Thema & Leitfrage</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        In der 5. Sitzung wurden internationale Institutionen und globale Krisen (wie globale Klimapolitik und Sicherheitsregime) genauer unter die Lupe genommen. Es wurde diskutiert, ob Institutionen lediglich Instrumente mächtiger Staaten sind oder eigenhafte normative Kraft entfalten.
+                    </p>
+                </div>
+
+                <div class="border-t border-slate-200 pt-6 space-y-4">
+                    <h4 class="font-bold text-slate-900">Zentrale Erkenntnisse:</h4>
+                    <div class="grid gap-4">
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200">
+                            <strong class="text-blue-600">1. Neorealistische Sicht auf Institutionen:</strong> Internationale Organisationen sind bloße Werkzeuge von Hegemonen. Sie dienen den Interessen starker Staaten und haben keine eigene unabhängige Macht.
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200">
+                            <strong class="text-orange-600">2. Konstruktivistische Sicht auf Institutionen:</strong> Organisationen und Normunternehmer formen neue Verhaltensstandards, prägen das Bewusstsein von Entscheidungsträgern und können Staaten langfristig in ihrem Handeln transformieren.
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200">
+                            <strong class="text-slate-900">3. Ausblick für die Praxis:</strong> Globale Probleme erfordern zunehmend kooperative Normen, stoßen jedoch regelmäßig an die harten nationalen Interessen des neorealistischen Kalküls.
                         </div>
                     </div>
                 </div>
