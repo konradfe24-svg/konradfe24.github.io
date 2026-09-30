@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Portfolio | Neorealismus und Konstruktivismus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        neo: { 50: '#f0f5fa', 100: '#d9e8f5', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' },
+                        kon: { 50: '#fdf4f0', 100: '#fbe8e1', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        .prose-text p { margin-bottom: 1rem; line-height: 1.75; color: #475569; }
+        .prose-text p:last-child { margin-bottom: 0; }
+        .nav-scroll { scrollbar-width: none; }
+        .nav-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-500 selection:text-white"
+      x-data="{ modalOpen: false, modalImgSrc: '', modalAlt: '', zoomed: false }"
+      @keydown.escape.window="modalOpen = false; zoomed = false">
+
+    <!-- LIGHTBOX (auf Body-Ebene, damit sie über dem Header liegt) -->
+    <div x-show="modalOpen" x-cloak x-transition.opacity
+         class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center"
+         @click="modalOpen = false; zoomed = false">
+        <button @click.stop="modalOpen = false; zoomed = false"
+                class="absolute top-4 right-4 z-[110] bg-white text-slate-900 w-11 h-11 rounded-full font-bold text-2xl flex items-center justify-center shadow-lg hover:bg-slate-200 transition"
+                aria-label="Schließen">&times;</button>
+        <p class="absolute bottom-4 left-1/2 -translate-x-1/2 z-[110] text-white/80 text-xs bg-black/50 px-3 py-1.5 rounded-full pointer-events-none"
+           x-text="zoomed ? 'Scrollen zum Bewegen · Klick auf das Bild zum Verkleinern' : 'Klick auf das Bild für Originalgröße · Esc zum Schließen'"></p>
+        <div class="w-screen h-screen overflow-auto flex p-4 sm:p-8" @click.stop="modalOpen = false; zoomed = false">
+            <img :src="modalImgSrc" :alt="modalAlt"
+                 @click.stop="zoomed = !zoomed"
+                 :class="zoomed ? 'max-w-none cursor-zoom-out m-auto' : 'max-w-full max-h-full object-contain cursor-zoom-in m-auto'"
+                 class="rounded-lg shadow-2xl bg-white">
+        </div>
+    </div>
+
+    <header class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
+            <a href="#intro" class="font-serif font-bold text-xl tracking-tight text-slate-900 shrink-0">TheorieVergleich</a>
+            <nav class="nav-scroll flex overflow-x-auto gap-5 text-sm font-medium text-slate-600 whitespace-nowrap">
+                <a href="#einleitung" class="hover:text-blue-600 transition-colors">Einleitung</a>
+                <a href="#steckbrief" class="hover:text-blue-600 transition-colors">Steckbrief</a>
+                <a href="#exzerpt" class="hover:text-blue-600 transition-colors">Exzerpt</a>
+                <a href="#werkstuecke" class="hover:text-blue-600 transition-colors">Werkstücke</a>
+                <a href="#vergleich" class="hover:text-blue-600 transition-colors">Vergleich</a>
+                <a href="#quiz" class="hover:text-blue-600 transition-colors">Quiz</a>
+                <a href="#simulator" class="hover:text-blue-600 transition-colors">Simulator</a>
+                <a href="#reflexion" class="hover:text-blue-600 transition-colors">Reflexion</a>
+                <a href="#fazit" class="hover:text-blue-600 transition-colors">Fazit</a>
+                <a href="#literatur" class="hover:text-blue-600 transition-colors">Literatur</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section id="intro" class="relative overflow-hidden py-20 lg:py-28 bg-gradient-to-b from-white via-slate-50 to-slate-100 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 mb-6">
+                    E-Portfolio · Einführung in Theorien der Konfliktforschung · SoSe 2026
+                </span>
+                <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight mb-6">
+                    Neorealismus vs. Konstruktivismus
+                </h1>
+                <p class="text-lg sm:text-xl text-slate-600 mb-10 leading-relaxed">
+                    Ist internationale Politik von Macht und Anarchie bestimmt, oder von den Deutungen, Normen und Identitäten, mit denen Akteure ihre Welt konstruieren? Dieses Portfolio vergleicht zwei Antworten und erprobt sie am Konflikt um Taiwan.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#einleitung" class="inline-flex justify-center items-center px-6 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition shadow-lg shadow-blue-500/25">
+                        Zur Einleitung &rarr;
+                    </a>
+                    <a href="#simulator" class="inline-flex justify-center items-center px-6 py-3 rounded-xl bg-white border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition">
+                        Krisen-Simulator
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white p-8 rounded-3xl border border-neo-100 shadow-sm relative overflow-hidden group hover:shadow-md transition">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-neo-50 rounded-bl-full group-hover:scale-110 transition-transform"></div>
+                    <div class="relative z-10">
+                        <span class="text-neo-600 font-bold text-xs uppercase tracking-wider bg-neo-100 px-3 py-1 rounded-full">Rationalistisch & Materialistisch</span>
+                        <h3 class="font-serif text-2xl font-bold text-slate-900 mt-4 mb-2">Neorealismus</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Erklärt internationale Politik aus der anarchischen Struktur des Staatensystems. Weil keine übergeordnete Instanz Sicherheit garantiert, müssen Staaten selbst für ihr Überleben sorgen und nach Macht streben.
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-kon-100 shadow-sm relative overflow-hidden group hover:shadow-md transition">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-kon-50 rounded-bl-full group-hover:scale-110 transition-transform"></div>
+                    <div class="relative z-10">
+                        <span class="text-kon-600 font-bold text-xs uppercase tracking-wider bg-kon-100 px-3 py-1 rounded-full">Sozialtheoretisch & Ideell</span>
+                        <h3 class="font-serif text-2xl font-bold text-slate-900 mt-4 mb-2">Konstruktivismus</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Versteht Strukturen, Interessen und Identitäten als Ergebnis sozialer Konstruktion. Auch Anarchie hat keine feste Logik, sie ist das, was Akteure durch ihre Praxis und ihre Deutungen daraus machen.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EINLEITUNG -->
+    <section id="einleitung" class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Einleitung</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-900 mt-4">Schwerpunkt und roter Faden</h2>
+            </div>
+            <div class="prose-text text-base sm:text-lg">
+                <p>Kaum eine Frage beschäftigt die Konfliktforschung so grundlegend wie die, warum Staaten miteinander in Konflikt geraten und unter welchen Bedingungen sie kooperieren. In meinem E-Portfolio konzentriere ich mich deshalb auf zwei Theorien, die diese Frage besonders gegensätzlich beantworten. Der Neorealismus führt Konflikte auf die anarchische Struktur des internationalen Systems und die Verteilung von Macht zurück (Schimmelfennig 2017: 67). Der Konstruktivismus fragt dagegen, wie Akteure ihre Welt deuten und wie aus diesen Deutungen Interessen, Feindbilder und Handlungsorientierungen entstehen (Weller 2005: 35).</p>
+                <p>Das Portfolio folgt der Leitfrage, wie Neorealismus und Konstruktivismus Konflikt und Kooperation zwischen Staaten erklären und was sich mit ihrer Hilfe über eine aktuelle Krise wie den Konflikt um Taiwan sagen lässt.</p>
+                <p>Den Ausgangspunkt bildet ein Steckbrief zum Neorealismus, der die Grundbegriffe der Theorie ordnet. Darauf folgt ein Exzerpt zum reflexiven Konstruktivismus, das zeigt, wie vielfältig und selbstkritisch konstruktivistische Ansätze sind (Weller 2005). Anschließend dokumentiere ich die Werkstücke aus den Sitzungen, in denen beide Theorien an konkreten Fragen erprobt wurden. Im Theorievergleich führe ich diese Ergebnisse zusammen, bevor ein Quiz und ein Krisen-Simulator dazu einladen, die Theorien selbst anzuwenden. Reflexion und Fazit schließen das Portfolio ab und beantworten die Leitfrage.</p>
+            </div>
+
+            <!-- Werkstück-Übersicht -->
+            <div class="mt-12">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4 text-center">Übersicht der Werkstücke</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                    <a href="#steckbrief" class="bg-neo-50 border border-neo-100 rounded-2xl p-4 hover:shadow-md transition"><span class="block text-xs text-neo-700 font-semibold mb-1">Theorie-Steckbrief</span><span class="font-medium text-slate-900">Neorealismus</span></a>
+                    <a href="#exzerpt" class="bg-kon-50 border border-kon-100 rounded-2xl p-4 hover:shadow-md transition"><span class="block text-xs text-kon-700 font-semibold mb-1">Exzerpt</span><span class="font-medium text-slate-900">Reflexiver Konstruktivismus</span></a>
+                    <a href="#basis1" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 hover:shadow-md transition"><span class="block text-xs text-slate-500 font-semibold mb-1">Basisaufgabe 1</span><span class="font-medium text-slate-900">Sitzung 4</span></a>
+                    <a href="#basis2" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 hover:shadow-md transition"><span class="block text-xs text-slate-500 font-semibold mb-1">Basisaufgabe 2</span><span class="font-medium text-slate-900">Sitzung 5</span></a>
+                    <a href="#erweiterung1" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 hover:shadow-md transition"><span class="block text-xs text-slate-500 font-semibold mb-1">Erweiterungsaufgabe 1</span><span class="font-medium text-slate-900">Sitzung ?</span></a>
+                    <a href="#erweiterung2" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 hover:shadow-md transition"><span class="block text-xs text-slate-500 font-semibold mb-1">Erweiterungsaufgabe 2</span><span class="font-medium text-slate-900">Sitzung ?</span></a>
+                    <a href="#vergleich" class="bg-slate-900 text-white rounded-2xl p-4 hover:shadow-md transition"><span class="block text-xs text-slate-300 font-semibold mb-1">Theorievergleich</span><span class="font-medium">mit Anwendung auf Taiwan</span></a>
+                    <a href="#reflexion" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 hover:shadow-md transition"><span class="block text-xs text-slate-500 font-semibold mb-1">Abschluss</span><span class="font-medium text-slate-900">Reflexion & Fazit</span></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STECKBRIEF NEOREALISMUS -->
+    <section id="steckbrief" class="py-20 bg-slate-100 border-t border-slate-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-xs font-semibold uppercase tracking-wider text-neo-700 bg-neo-100 px-3 py-1 rounded-full">Theorie-Steckbrief</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-900 mt-4 mb-2">Neorealismus</h2>
+                <p class="text-slate-600">Grundlage ist das Kapitel „Unsicherheit und Macht“ (Schimmelfennig 2017: 67–88).</p>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <dl class="divide-y divide-slate-100 text-sm sm:text-base">
+                    <div class="grid md:grid-cols-4 gap-1 md:gap-6 p-5 sm:p-6">
+                        <dt class="font-semibold text-neo-700">Begründer</dt>
+                        <dd class="md:col-span-3 text-slate-600">Kenneth N. Waltz mit <em>Theory of International Politics</em> (1979). Vorläufer ist der klassische Realismus Hans J. Morgenthaus mit <em>Politics Among Nations</em> (1948) (Schimmelfennig 2017: 67).</dd>
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-1 md:gap-6 p-5 sm:p-6">
+                        <dt class="font-semibold text-neo-700">Akteure</dt>
+                        <dd class="md:col-span-3 text-slate-600">Ausschließlich Staaten. Sie gelten als nach außen einheitlich handelnde, egoistisch-zweckrationale Akteure (Schimmelfennig 2017: 68).</dd>
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-1 md:gap-6 p-5 sm:p-6">
+                        <dt class="font-semibold text-neo-700">Strukturen</dt>
+                        <dd class="md:col-span-3 text-slate-600">Die Anarchie ist die Konstante des Systems. Machtverteilung (Uni-, Bi- oder Multipolarität) und Militärtechnologie sind die veränderlichen Strukturen, die ihre Wirkungen abschwächen oder verstärken (Schimmelfennig 2017: 69, 74–78).</dd>
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-1 md:gap-6 p-5 sm:p-6">
+                        <dt class="font-semibold text-neo-700">Strukturwirkungen</dt>
+                        <dd class="md:col-span-3 text-slate-600">Existenzielle Unsicherheit, Vorrang der Autonomiesicherung vor allen anderen Zielen, Selbsthilfe und Machtstreben. Machtstreben gilt im Neorealismus nicht als menschliche Eigenschaft, sondern als Folge der Anarchie (Schimmelfennig 2017: 69–71).</dd>
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-1 md:gap-6 p-5 sm:p-6">
+                        <dt class="font-semibold text-neo-700">Machtbegriff</dt>
+                        <dd class="md:col-span-3 text-slate-600">Militärische Macht ist die „Währung“ der internationalen Politik. Sie ist ein relatives Gut, deshalb vergleichen Staaten sich ständig mit anderen (Schimmelfennig 2017: 71f).</dd>
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-1 md:gap-6 p-5 sm:p-6">
+                        <dt class="font-semibold text-neo-700">Mechanismen</dt>
+                        <dd class="md:col-span-3 text-slate-600">Das Sicherheitsdilemma verhindert, dass selbst rein defensive Staaten aus der Machtkonkurrenz aussteigen. Das Machtgleichgewicht (internes und externes <em>balancing</em>) verhindert, dass offensive Staaten dauerhaft die Vorherrschaft erringen (Schimmelfennig 2017: 79–82).</dd>
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-1 md:gap-6 p-5 sm:p-6">
+                        <dt class="font-semibold text-neo-700">Kooperation</dt>
+                        <dd class="md:col-span-3 text-slate-600">Schwierig und instabil wegen der Furcht vor Betrug, relativen Verlusten und Abhängigkeit. Am ehesten kommt sie unter einem Hegemon zustande, der Regeln setzt und durchsetzt (Schimmelfennig 2017: 73f, 83f).</dd>
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-1 md:gap-6 p-5 sm:p-6">
+                        <dt class="font-semibold text-neo-700">Varianten</dt>
+                        <dd class="md:col-span-3 text-slate-600">Defensiver Realismus (Waltz) mit Sicherheit als oberstem Ziel und offensiver Realismus (Mearsheimer, Zakaria) mit Machtmaximierung (Schimmelfennig 2017: 72).</dd>
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-1 md:gap-6 p-5 sm:p-6">
+                        <dt class="font-semibold text-neo-700">Dynamik</dt>
+                        <dd class="md:col-span-3 text-slate-600">Hegemoniezyklen als „stationäre“ Zyklen. Solange Anarchie herrscht, gibt es keinen Fortschritt in der internationalen Politik (Schimmelfennig 2017: 84–87).</dd>
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-1 md:gap-6 p-5 sm:p-6 bg-neo-50">
+                        <dt class="font-semibold text-neo-900">Kernhypothese</dt>
+                        <dd class="md:col-span-3 text-slate-700 font-medium">Je höher die internationale Machtkonzentration ist und je stärker die verfügbare Technologie die Defensive begünstigt, desto wahrscheinlicher sind Frieden und Kooperation (Schimmelfennig 2017: 87).</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mt-8">
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8">
+                    <h3 class="font-bold text-slate-900 mb-3">Stärken</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Die Stärke des Neorealismus liegt in seiner Sparsamkeit. Mit wenigen Annahmen erklärt er, warum selbst Staaten ohne aggressive Absichten in Rüstungswettläufe geraten, weil sie einander unter Unsicherheit das Schlimmste unterstellen müssen (Schimmelfennig 2017: 80f).</p>
+                </div>
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8">
+                    <h3 class="font-bold text-slate-900 mb-3">Grenzen</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Grundlegenden Wandel kann die Theorie kaum erfassen. Das „Neue Denken“ in der sowjetischen Außenpolitik am Ende des Ost-West-Konflikts galt als geradezu theoriewidriges Verhalten und erschütterte den materialistischen Blick auf internationale Politik (Weller 2005: 44).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXZERPT WELLER -->
+    <section id="exzerpt" class="py-20 bg-white border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-xs font-semibold uppercase tracking-wider text-kon-700 bg-kon-100 px-3 py-1 rounded-full">Exzerpt</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-900 mt-4 mb-2">Perspektiven eines reflexiven Konstruktivismus</h2>
+            </div>
+
+            <div class="bg-kon-50 border border-kon-100 rounded-2xl p-5 text-sm text-slate-700 mb-10">
+                <span class="font-semibold text-kon-900">Text.</span>
+                Weller, Christoph 2005: Perspektiven eines reflexiven Konstruktivismus für die Internationalen Beziehungen, in: Ulbert, Cornelia/Weller, Christoph (Hrsg.): Konstruktivistische Analysen der internationalen Politik, Wiesbaden, 35–64.
+            </div>
+
+            <div class="space-y-10">
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-slate-900 mb-3">Fragestellung</h3>
+                    <div class="prose-text">
+                        <p>Der Text fragt, was eine konstruktivistische Perspektive in den Internationalen Beziehungen leisten kann, wenn sie ihren eigenen Anspruch ernst nimmt. Wenn Normen, Ideen, Werte und Identitäten als soziale Konstruktionen gelten, dann ist auch die wissenschaftliche Analyse dieser Konstruktionen selbst eine Konstruktion (Weller 2005: 36). Daraus wird das Programm eines reflexiven Konstruktivismus entwickelt.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-slate-900 mb-3">Zentrale These</h3>
+                    <div class="prose-text">
+                        <p>Die in den IB verbreiteten Spielarten des Konstruktivismus greifen zu kurz. Sie ergänzen den Rationalismus um ideelle Faktoren, übernehmen aber dessen Kategorien von staatlichen Akteuren und zwischenstaatlichen Strukturen und blenden die eigene Beobachterrolle aus. Ein reflexiver Konstruktivismus soll diese Lücken schließen, indem er gesellschaftliche und wissenschaftliche Konstruktionen der Wirklichkeit mit demselben analytischen Zugriff untersucht (Weller 2005: 49, 55).</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-slate-900 mb-4">Argumentationsgang</h3>
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6">
+                            <h4 class="font-bold text-slate-900 mb-2">1. Die Reflexivität konstruktivistischer Analysen</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">Konstruktivistische Analysen untersuchen meist Gegenstände, deren Bedeutung umstritten ist. Wer eine Deutung als die politisch dominante ausweist, ergreift damit Partei im Deutungsstreit und wirkt auf ihn zurück (Weller 2005: 37). Weil jede Textanalyse ein Vorverständnis voraussetzt, lässt sich dieses Problem nicht allein methodisch lösen (Weller 2005: 38). Wissenschaft erscheint deshalb weniger als Wahrheitsproduktion denn als Deutungsangebot, das im politischen Diskurs selbst zu einem ideellen Einfluss wird (Weller 2005: 37, 39).</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6">
+                            <h4 class="font-bold text-slate-900 mb-2">2. Der Entstehungskontext</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">Der Aufstieg des Konstruktivismus wird als Reaktion auf historische Ereignisse und auf Einflüsse aus Nachbardisziplinen gedeutet. Besonders das Ende des Ost-West-Konflikts erschütterte den IB-Materialismus, weil das „Neue Denken“ in der Sowjetunion den vermeintlichen Naturgesetzen der internationalen Politik widersprach (Weller 2005: 42–44). Die Darstellung versteht sich dabei ausdrücklich selbst als Deutungsangebot und nicht als Beschreibung historischer Tatsachen (Weller 2005: 41).</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6">
+                            <h4 class="font-bold text-slate-900 mb-2">3. Drei Schritte der Blickfelderweiterung</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">Im ersten Schritt vom IB-Materialismus zum Staatskonstruktivismus wird Anarchie als soziale statt als materielle Struktur verstanden. Die Konstrukteure dieser Struktur sind bei Wendt allerdings allein die Staaten, denen personale Eigenschaften zugeschrieben werden (Weller 2005: 45f). Der Sozialkonstruktivismus im Anschluss an Berger und Luckmann versteht Staaten dagegen als gesellschaftlich hergestellte Ordnungen, die ständig reproduziert werden müssen, und kann so auch innergesellschaftliche Konstruktionen und nichtstaatliche Akteure erfassen (Weller 2005: 46–48). Der reflexive Konstruktivismus bezieht zusätzlich die wissenschaftliche Beobachtung und ihre Wirkungen auf Weltbilder und Feindbilder ein (Weller 2005: 49).</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6">
+                            <h4 class="font-bold text-slate-900 mb-2">4. Drei Probleme gängiger Ansätze</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">Das erste Problem sind konkurrierende Erklärungsfaktoren. Ideen, Normen, Kultur und Identität stehen unverbunden nebeneinander, und es fehlt ein Akteursmodell, das erklärt, wann welcher Faktor handlungsleitend wird (Weller 2005: 50). Das zweite Problem ist die fehlende Staatstheorie. Staaten können weder denken noch sprechen. Ideelle Faktoren finden sich nur in den Äußerungen von Repräsentantinnen und Repräsentanten, deren gesellschaftlicher Rückhalt umstritten sein kann (Weller 2005: 51f). Das dritte Problem ist die fehlende Selbstbeobachtung. Forschende analysieren Konstruktionen mit denselben kognitiven Strukturen wie die untersuchten Akteure und prägen mit ihren Ergebnissen die gesellschaftliche Wirklichkeitskonstruktion mit (Weller 2005: 53f).</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6">
+                            <h4 class="font-bold text-slate-900 mb-2">5. Ein reflexiver Konstruktivismus</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">Den Kern bildet die Beobachtung zweiter Ordnung. Gefragt wird nicht mehr, was ein Akteur beobachtet, sondern wie er beobachtet und mit welchen Unterscheidungen er Wirklichkeit konstruiert (Weller 2005: 55f). Wirklichkeit gilt dabei als Produkt des Beobachtens und nicht als Abbild einer äußeren Realität. Weil auch die wissenschaftliche Beobachtung zweiter Ordnung nur Beobachtung ist, beansprucht sie keinen privilegierten Zugang zur Welt (Weller 2005: 56f). Der Staatskonstruktivismus lässt sich erst integrieren, wenn er ohne Vermenschlichung des Staates auf der Grundlage einer Staatstheorie reformuliert wird (Weller 2005: 57).</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6">
+                            <h4 class="font-bold text-slate-900 mb-2">6. Schluss</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">Am Beispiel von Reagan, Kohl, Genscher und Gorbatschow im Jahr 1986 wird abschließend gezeigt, dass Akteure im selben internationalen System zu ganz unterschiedlichen Wirklichkeitskonstruktionen kommen. Entscheidend ist demnach nicht die Realität selbst, sondern es sind die Beobachtungsprozesse der Akteure und die kommunikativen Kontexte, in die sie eingebettet sind (Weller 2005: 58).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-slate-900 mb-4">Zentrale Begriffe</h3>
+                    <div class="grid sm:grid-cols-2 gap-3 text-sm">
+                        <div class="border border-slate-200 rounded-2xl p-4"><span class="font-semibold text-slate-900 block mb-1">IB-Materialismus</span><span class="text-slate-600">Sicht, in der Militärpotenziale, Hegemonie und Anarchie wie Naturgesetze behandelt werden (Weller 2005: 42).</span></div>
+                        <div class="border border-slate-200 rounded-2xl p-4"><span class="font-semibold text-slate-900 block mb-1">Staatskonstruktivismus</span><span class="text-slate-600">Staaten konstruieren die Wirklichkeit, in der sie interagieren, und werden dabei wie Personen behandelt (Weller 2005: 45f).</span></div>
+                        <div class="border border-slate-200 rounded-2xl p-4"><span class="font-semibold text-slate-900 block mb-1">Sozialkonstruktivismus</span><span class="text-slate-600">Gesellschaftsordnung als ständige menschliche Produktion, auch Staaten sind gesellschaftlich hergestellt (Weller 2005: 47).</span></div>
+                        <div class="border border-slate-200 rounded-2xl p-4"><span class="font-semibold text-slate-900 block mb-1">Reflexivität</span><span class="text-slate-600">Aufmerksamkeit für den Konstruktionscharakter der eigenen wissenschaftlichen Analyse (Weller 2005: 36).</span></div>
+                        <div class="border border-slate-200 rounded-2xl p-4"><span class="font-semibold text-slate-900 block mb-1">Beobachtung zweiter Ordnung</span><span class="text-slate-600">Beobachtung dessen, wie ein Beobachter beobachtet und was er dabei nicht sehen kann (Weller 2005: 55).</span></div>
+                        <div class="border border-slate-200 rounded-2xl p-4"><span class="font-semibold text-slate-900 block mb-1">Wirklichkeit und Realität</span><span class="text-slate-600">Wirklichkeit ist das Produkt des Beobachtens, Realität die ontologisch unabhängige Welt (Weller 2005: 56).</span></div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-slate-900 mb-3">Eigene Einordnung</h3>
+                    <div class="prose-text">
+                        <p>Für mein Portfolio ist der Text in zweifacher Hinsicht wichtig. Er zeigt erstens, dass es „den“ Konstruktivismus nicht gibt. Der Vergleich mit dem Neorealismus fällt anders aus, je nachdem, ob man ihn mit dem Staatskonstruktivismus oder mit einer reflexiven Perspektive vergleicht. Zweitens überzeugt mich die Kritik an der Vermenschlichung des Staates. Auch mein Krisen-Simulator lässt Staaten wie Personen handeln, indem er Entscheidungen an zwei Staatschefs knüpft.</p>
+                        <p>Kritisch sehe ich, dass der Text ein sehr anspruchsvolles Programm formuliert, aber weitgehend offenlässt, wie eine reflexiv-konstruktivistische Analyse eines konkreten Konflikts methodisch aussehen würde.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WERKSTÜCKE AUS DEN SITZUNGEN -->
+    <section id="werkstuecke" class="py-20 bg-slate-100 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <div class="text-center">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-600 bg-white px-3 py-1 rounded-full border border-slate-200">Werkstücke aus dem Semester</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-900 mt-4 mb-2">Basis- und Erweiterungsaufgaben</h2>
+                <p class="text-slate-600">Die Aufgaben aus den Sitzungen erproben beide Theorien an konkreten Fragen und bereiten den Theorievergleich vor.</p>
+            </div>
+
+            <!-- Basisaufgabe 1: Sitzung 4 -->
+            <article id="basis1" class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-6 scroll-mt-24">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-100 px-3 py-1 rounded-full">Basisaufgabe 1 · Sitzung 4</span>
+                    <h3 class="font-serif text-2xl font-bold text-slate-900 mt-4">Anwendung und Grenzen im Praxistest</h3>
+                </div>
+
+                <figure class="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-100">
+                    <button type="button"
+                            class="group relative block w-full overflow-hidden rounded-xl border border-slate-200 bg-white cursor-zoom-in"
+                            @click="modalOpen = true; zoomed = false; modalImgSrc = 'Poster_Neorealismus.jpg'; modalAlt = 'Poster Neorealismus'">
+                        <img src="Poster_Neorealismus.jpg" alt="Poster Neorealismus"
+                             class="w-full max-h-[36rem] object-contain group-hover:scale-[1.02] transition duration-300"
+                             onerror="this.onerror=null;this.src='https://placehold.co/900x600/e2e8f0/475569?text=Poster+Neorealismus'">
+                        <span class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-sm font-semibold">
+                            Zum Vergrößern klicken
+                        </span>
+                    </button>
+                    <figcaption class="text-xs text-slate-500 mt-3 italic text-center">Poster zum Neorealismus. Klick öffnet die Großansicht, ein weiterer Klick zeigt das Poster in Originalgröße.</figcaption>
+                </figure>
+
+                <div class="prose-text">
+                    <p>Im Mittelpunkt der Sitzung stand die Anwendung von Neorealismus und Konstruktivismus auf reale Konfliktmuster. Untersucht wurde, inwiefern strukturelle Zwänge oder veränderte Wahrnehmungen und Normen das Handeln von Staaten lenken.</p>
+                </div>
+
+                <div class="grid gap-4">
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-sm leading-relaxed text-slate-600">
+                        <strong class="text-blue-600 block mb-1">Grenzen des Neorealismus</strong>
+                        Der Neorealismus erklärt schlüssig, warum Staaten in Rüstungsspiralen geraten. Grundlegenden Wandel wie die europäische Integration oder das friedliche Ende des Ost-West-Konflikts kann er dagegen kaum fassen, weil er internationale Politik als stationären Zyklus ohne Fortschritt versteht (Schimmelfennig 2017: 86f; Weller 2005: 44).
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-sm leading-relaxed text-slate-600">
+                        <strong class="text-orange-600 block mb-1">Stärke des Konstruktivismus</strong>
+                        Bedrohungen sind nicht einfach materiell gegeben, sondern werden gedeutet. Wie groß eine Gefahr ist, bleibt oft gesellschaftlich umstritten, wie die unterschiedlichen Bedrohungswahrnehmungen in den USA und in Europa nach dem 11. September 2001 zeigen (Weller 2005: 35).
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-sm leading-relaxed text-slate-600">
+                        <strong class="text-slate-900 block mb-1">Synthese</strong>
+                        Beide Ansätze lassen sich ergänzend lesen. Realistische Faktoren machen verständlich, unter welchem Druck Staaten in akuten Krisen handeln. Konstruktivistische Faktoren helfen zu verstehen, wie sich die Deutung dieser Lage und damit langfristig auch die Beziehungen verändern.
+                    </div>
+                </div>
+            </article>
+
+            <!-- Basisaufgabe 2: Sitzung 5 -->
+            <article id="basis2" class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-6 scroll-mt-24">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-purple-600 bg-purple-100 px-3 py-1 rounded-full">Basisaufgabe 2 · Sitzung 5</span>
+                    <h3 class="font-serif text-2xl font-bold text-slate-900 mt-4">Internationale Institutionen und globale Krisen</h3>
+                </div>
+                <div class="prose-text">
+                    <p>In dieser Sitzung ging es um internationale Institutionen am Beispiel von Klimapolitik und Sicherheitsregimen. Diskutiert wurde, ob Institutionen lediglich Instrumente mächtiger Staaten sind oder eine eigene normative Kraft entfalten.</p>
+                </div>
+                <div class="grid gap-4">
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-sm leading-relaxed text-slate-600">
+                        <strong class="text-blue-600 block mb-1">Neorealistische Sicht auf Institutionen</strong>
+                        Internationale Organisationen spiegeln die Interessen ihrer mächtigsten Mitglieder. Ihre Regeln und Verfahren stellen sicher, dass diese Staaten sie für ihre Zwecke nutzen können (Schimmelfennig 2017: 83f).
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-sm leading-relaxed text-slate-600">
+                        <strong class="text-orange-600 block mb-1">Konstruktivistische Sicht auf Institutionen</strong>
+                        Neben Regierungen gestalten auch Nichtregierungsorganisationen und <em>epistemic communities</em> die Weltbilder mit, auf deren Grundlage international gehandelt wird (Weller 2005: 48). Institutionen sind dann mehr als Werkzeuge, weil sie Erwartungen und Deutungen prägen.
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-sm leading-relaxed text-slate-600">
+                        <strong class="text-slate-900 block mb-1">Ausblick</strong>
+                        Globale Probleme erfordern zunehmend kooperative Normen. Sie stoßen jedoch regelmäßig an nationale Sicherheitsinteressen, denen Staaten aus neorealistischer Sicht alle anderen Ziele unterordnen (Schimmelfennig 2017: 70).
+                    </div>
+                </div>
+            </article>
+
+            <!-- Erweiterungsaufgabe 1 (PLATZHALTER) -->
+            <article id="erweiterung1" class="bg-white rounded-3xl p-6 sm:p-10 border-2 border-dashed border-amber-300 space-y-4 scroll-mt-24">
+                <span class="text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-100 px-3 py-1 rounded-full">Erweiterungsaufgabe 1 · Sitzung ?</span>
+                <h3 class="font-serif text-2xl font-bold text-slate-900">Titel der Aufgabe</h3>
+                <p class="text-slate-500 text-sm">Platzhalter. Hier die erste Erweiterungsaufgabe einfügen und in zwei, drei Sätzen erklären, wie sie mit der Leitfrage zusammenhängt.</p>
+            </article>
+
+            <!-- Erweiterungsaufgabe 2 (PLATZHALTER) -->
+            <article id="erweiterung2" class="bg-white rounded-3xl p-6 sm:p-10 border-2 border-dashed border-amber-300 space-y-4 scroll-mt-24">
+                <span class="text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-100 px-3 py-1 rounded-full">Erweiterungsaufgabe 2 · Sitzung ?</span>
+                <h3 class="font-serif text-2xl font-bold text-slate-900">Titel der Aufgabe</h3>
+                <p class="text-slate-500 text-sm">Platzhalter. Hier die zweite Erweiterungsaufgabe einfügen und in zwei, drei Sätzen erklären, wie sie mit der Leitfrage zusammenhängt.</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- THEORIEVERGLEICH -->
+    <section id="vergleich" class="py-20 bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-semibold uppercase tracking-wider text-white bg-slate-900 px-3 py-1 rounded-full">Theorievergleich</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-900 mt-4 mb-4">Zwei Antworten auf dieselbe Frage</h2>
+            </div>
+
+            <div class="max-w-3xl mx-auto prose-text text-base sm:text-lg mb-16">
+                <p>Beide Theorien beginnen bei derselben Beobachtung. Es gibt keine übergeordnete Instanz, die zwischen Staaten für Sicherheit und Ordnung sorgt. Sie ziehen daraus aber gegensätzliche Schlüsse. Für den Neorealismus ist die Anarchie eine Struktur mit festen Wirkungen. Sie zwingt Staaten zur Selbsthilfe und zum Streben nach Macht, weil militärische Macht relativ ist und jeder Staat sich mit anderen vergleichen muss (Schimmelfennig 2017: 70–72). Für den Konstruktivismus hat Anarchie dagegen keine vorgegebene Logik. Ob Staaten einander als Feinde, Rivalen oder Freunde begegnen, hängt davon ab, was sie durch ihre Praxis daraus machen (Wendt 1992, zit. n. Weller 2005: 44).</p>
+                <p>Auch beim Akteursverständnis unterscheiden sich die Theorien deutlich. Der Neorealismus behandelt Staaten als einheitliche, zweckrationale Akteure mit gegebenen Interessen (Schimmelfennig 2017: 68). Der Staatskonstruktivismus übernimmt zwar den Staat als Akteur, fragt aber, wie dessen Identität und Interessen erst in der Interaktion entstehen. Genau hier setzt die Kritik des reflexiven Konstruktivismus an. Staaten können selbst keine Ideen verarbeiten oder Identitäten ausbilden. Ideelle Faktoren finden sich nur in den Äußerungen und Weltbildern konkreter Menschen und gesellschaftlicher Gruppen (Weller 2005: 51f).</p>
+                <p>Am deutlichsten wird der Unterschied beim Thema Wandel. Der Neorealismus erwartet einen ewigen Wechsel von Machtkonzentration und Machtdiffusion ohne echten Fortschritt (Schimmelfennig 2017: 86f). Kooperation bleibt instabil, weil Staaten Betrug, relative Verluste und Abhängigkeit fürchten (Schimmelfennig 2017: 73f). Der Konstruktivismus hält dagegen grundlegenden Wandel für möglich, weil soziale Ordnungen nur so lange bestehen, wie sie durch menschliches Handeln reproduziert werden (Berger/Luckmann 1980: 55, zit. n. Weller 2005: 47).</p>
+                <p>Eine häufige Verkürzung besteht darin, den Konstruktivismus als optimistische Friedenstheorie und den Neorealismus als Theorie des Krieges zu lesen. Das wird beiden nicht gerecht. Der defensive Realismus geht davon aus, dass Staaten vor allem Sicherheit und nicht Macht maximieren wollen, und benennt mit Machtkonzentration und defensiver Technologie konkrete Bedingungen für Frieden (Schimmelfennig 2017: 72, 87). Umgekehrt erklärt der Konstruktivismus auch Feindschaft. Feindbilder sind ebenso Konstruktionen wie Sicherheitsgemeinschaften, und auch wissenschaftliche Analysen können zu ihnen beitragen (Weller 2005: 49).</p>
+                <p>Auf den Konflikt um Taiwan angewendet, lenkt der Neorealismus den Blick auf die Machtverschiebung zwischen den USA und einem aufsteigenden China, das im Modell der Hegemoniezyklen bereits als möglicher Herausforderer erscheint (Schimmelfennig 2017: 75, 86). Der Konstruktivismus fragt dagegen, welche Bedeutung Taiwan in den Selbstbildern der Beteiligten hat, etwa als Teil einer nationalen Geschichte oder als Symbol der Demokratie. Erst diese Deutungen machen verständlich, warum die Frage für beide Seiten so schwer verhandelbar ist. Der Krisen-Simulator greift genau diese beiden Perspektiven auf.</p>
+            </div>
+
+            <!-- Tabs: Dimensionen -->
+            <div class="text-center max-w-3xl mx-auto mb-8">
+                <h3 class="font-serif text-2xl font-bold text-slate-900 mb-2">Die Dimensionen im Detail</h3>
+                <p class="text-slate-600 text-sm">Wähle eine Dimension, um die beiden Perspektiven nebeneinander zu sehen.</p>
+                <div class="flex flex-wrap justify-center gap-2 mt-6" id="tab-buttons">
+                    <button onclick="switchTab('worldview')" class="tab-btn px-5 py-2.5 rounded-xl font-medium text-sm transition bg-blue-600 text-white shadow-sm" data-target="worldview">Weltbild & Ontologie</button>
+                    <button onclick="switchTab('security')" class="tab-btn px-5 py-2.5 rounded-xl font-medium text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-target="security">Sicherheitsbegriff</button>
+                    <button onclick="switchTab('actors')" class="tab-btn px-5 py-2.5 rounded-xl font-medium text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-target="actors">Akteure & Interessen</button>
+                    <button onclick="switchTab('scholars')" class="tab-btn px-5 py-2.5 rounded-xl font-medium text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-target="scholars">Zentrale Vertreter:innen</button>
+                </div>
+            </div>
+
+            <div class="max-w-5xl mx-auto bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm mb-16">
+                <div id="content-worldview" class="tab-content grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-2xl border border-neo-100 shadow-sm">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="w-8 h-8 rounded-lg bg-neo-100 text-neo-600 flex items-center justify-center font-bold text-sm">NR</span>
+                            <h4 class="font-serif text-xl font-bold text-slate-900">Anarchie als Struktur</h4>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">Das internationale System ist durch <strong>Anarchie</strong> gekennzeichnet. Es gibt keine Weltregierung, die Recht durchsetzen könnte, deshalb ist es ein System der Selbsthilfe (Waltz 1979: 104, zit. n. Schimmelfennig 2017: 71).</p>
+                        <p class="text-slate-600 text-sm leading-relaxed">Militärische Macht ist die wichtigste Ressource. Kooperation ist schwierig, weil Staaten fürchten müssen, dass Partner betrügen oder durch relative Gewinne mächtiger werden (Schimmelfennig 2017: 71–74).</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-kon-100 shadow-sm">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="w-8 h-8 rounded-lg bg-kon-100 text-kon-600 flex items-center justify-center font-bold text-sm">KO</span>
+                            <h4 class="font-serif text-xl font-bold text-slate-900">Wirklichkeit als Konstruktion</h4>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">Anarchie ist kein Phänomen der materiellen Umwelt, sondern <strong>„what states make of it“</strong> (Wendt 1992, zit. n. Weller 2005: 44).</p>
+                        <p class="text-slate-600 text-sm leading-relaxed">Ideen, Normen, Identitäten und Weltbilder bestimmen, wie Akteure ihre Interessen definieren. Der reflexive Konstruktivismus fragt zusätzlich, wie diese Wirklichkeitskonstruktionen durch Beobachtung entstehen (Weller 2005: 55f).</p>
+                    </div>
+                </div>
+
+                <div id="content-security" class="tab-content hidden grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-2xl border border-neo-100 shadow-sm">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="w-8 h-8 rounded-lg bg-neo-100 text-neo-600 flex items-center justify-center font-bold text-sm">NR</span>
+                            <h4 class="font-serif text-xl font-bold text-slate-900">Autonomie & Sicherheitsdilemma</h4>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">Sicherheit bedeutet nicht bloßes Überleben, sondern politische Autonomie (Schimmelfennig 2017: 70). Im <strong>Sicherheitsdilemma</strong> deutet ein Staat die defensiv gemeinten Rüstungsmaßnahmen des anderen als Bedrohung. So geraten selbst Staaten ohne aggressive Absichten in eine Machtkonkurrenz (Schimmelfennig 2017: 80f).</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-kon-100 shadow-sm">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="w-8 h-8 rounded-lg bg-kon-100 text-kon-600 flex items-center justify-center font-bold text-sm">KO</span>
+                            <h4 class="font-serif text-xl font-bold text-slate-900">Bedrohung als Deutung</h4>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">Was als Bedrohung gilt, ist umstritten und hängt von Wirklichkeitskonstruktionen ab (Weller 2005: 35). Staaten können eine <strong>Sicherheitsgemeinschaft</strong> bilden, in der Krieg undenkbar wird (Adler/Barnett 1998: 9, zit. n. Weller 2005: 45). Ebenso können sich aber Feindbilder verfestigen.</p>
+                    </div>
+                </div>
+
+                <div id="content-actors" class="tab-content hidden grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-2xl border border-neo-100 shadow-sm">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="w-8 h-8 rounded-lg bg-neo-100 text-neo-600 flex items-center justify-center font-bold text-sm">NR</span>
+                            <h4 class="font-serif text-xl font-bold text-slate-900">Der Staat als unitärer Akteur</h4>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed">Staaten werden wie Personen mit einheitlichem Willen behandelt. In der Außen- und Sicherheitspolitik überwiegt das „nationale Interesse“ gegenüber innenpolitischen Konflikten (Schimmelfennig 2017: 68).</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-kon-100 shadow-sm">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="w-8 h-8 rounded-lg bg-kon-100 text-kon-600 flex items-center justify-center font-bold text-sm">KO</span>
+                            <h4 class="font-serif text-xl font-bold text-slate-900">Wer konstruiert?</h4>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed">Der Staatskonstruktivismus sieht Staaten als Konstrukteure der internationalen Ordnung. Sozialkonstruktivistische Ansätze beziehen Gesellschaften, NGOs und <em>epistemic communities</em> ein, weil Staaten selbst weder sprechen noch denken können (Weller 2005: 46–52).</p>
+                    </div>
+                </div>
+
+                <div id="content-scholars" class="tab-content hidden grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-2xl border border-neo-100 shadow-sm">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="w-8 h-8 rounded-lg bg-neo-100 text-neo-600 flex items-center justify-center font-bold text-sm">NR</span>
+                            <h4 class="font-serif text-xl font-bold text-slate-900">Realismus</h4>
+                        </div>
+                        <ul class="space-y-3 text-slate-600 text-sm">
+                            <li class="bg-slate-50 p-3 rounded-xl border border-slate-100"><strong>Hans J. Morgenthau</strong> · klassischer Realismus</li>
+                            <li class="bg-slate-50 p-3 rounded-xl border border-slate-100"><strong>Kenneth N. Waltz</strong> · Begründer des Neorealismus, defensiver Realismus</li>
+                            <li class="bg-slate-50 p-3 rounded-xl border border-slate-100"><strong>John Mearsheimer</strong> · offensiver Realismus</li>
+                        </ul>
+                        <p class="text-xs text-slate-400 mt-3">(Schimmelfennig 2017: 67, 72)</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl border border-kon-100 shadow-sm">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span class="w-8 h-8 rounded-lg bg-kon-100 text-kon-600 flex items-center justify-center font-bold text-sm">KO</span>
+                            <h4 class="font-serif text-xl font-bold text-slate-900">Konstruktivismus</h4>
+                        </div>
+                        <ul class="space-y-3 text-slate-600 text-sm">
+                            <li class="bg-slate-50 p-3 rounded-xl border border-slate-100"><strong>Alexander Wendt</strong> · Staatskonstruktivismus, „Anarchy is what states make of it“</li>
+                            <li class="bg-slate-50 p-3 rounded-xl border border-slate-100"><strong>John G. Ruggie, Friedrich Kratochwil, Nicholas Onuf</strong> · Wegbereiter Ende der 1980er Jahre</li>
+                            <li class="bg-slate-50 p-3 rounded-xl border border-slate-100"><strong>Christoph Weller</strong> · reflexiver Konstruktivismus</li>
+                        </ul>
+                        <p class="text-xs text-slate-400 mt-3">(Weller 2005: 40, 45)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matrix -->
+            <div class="text-center max-w-3xl mx-auto mb-8">
+                <h3 class="font-serif text-2xl font-bold text-slate-900 mb-2">Die Theorien im direkten Raster</h3>
+            </div>
+            <div class="max-w-5xl mx-auto bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="hidden md:grid grid-cols-3 bg-slate-900 text-white p-6 font-semibold">
+                    <div>Kategorie</div>
+                    <div class="text-blue-400">Neorealismus</div>
+                    <div class="text-orange-400">Konstruktivismus</div>
+                </div>
+                <div class="divide-y divide-slate-100 text-sm sm:text-base" id="matrix-rows"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="py-20 bg-slate-100 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">Wissenstest</span>
+                <h2 class="font-serif text-3xl font-bold text-slate-900 mt-4 mb-2">Welche Theorie spricht hier?</h2>
+                <p class="text-slate-600 text-sm sm:text-base">Ordne die Aussagen dem Neorealismus oder dem Konstruktivismus zu. Vorsicht, nicht jede friedliche Aussage ist konstruktivistisch.</p>
+            </div>
+
+            <div id="quiz-container" class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm">
+                <div class="flex justify-between items-center mb-6 text-sm font-medium text-slate-500">
+                    <span id="question-progress">Frage 1</span>
+                    <span id="quiz-score" class="text-blue-600 font-bold">Punkte: 0</span>
+                </div>
+                <div class="mb-8">
+                    <h3 id="question-text" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 mb-6 leading-snug">Lade Frage …</h3>
+                    <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </div>
+                <div id="explanation-box" class="hidden bg-slate-50 border border-slate-200 p-5 rounded-2xl mb-6">
+                    <h4 id="explanation-title" class="font-bold text-base mb-1">Erklärung</h4>
+                    <p id="explanation-text" class="text-slate-600 text-sm leading-relaxed"></p>
+                </div>
+                <div class="flex justify-end">
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-slate-900 text-white px-6 py-3 rounded-xl font-medium text-sm hover:bg-slate-800 transition shadow-sm">Nächste Frage &rarr;</button>
+                </div>
+            </div>
+
+            <div id="result-card" class="hidden bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center">
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-sm">🏆</div>
+                <h3 class="font-serif text-2xl font-bold text-slate-900 mb-2">Quiz beendet!</h3>
+                <p id="result-text" class="text-slate-600 text-base mb-8"></p>
+                <button onclick="restartQuiz()" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition shadow-md">Quiz wiederholen</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SIMULATOR -->
+    <section id="simulator" class="py-20 bg-slate-900 text-white border-t border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-xs font-semibold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full">Theorieanwendung als Rollenspiel</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-4 mb-2 text-white">Krisen-Simulator: Straße von Taiwan</h2>
+                <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">Entscheide in drei Szenarien als Donald Trump (USA) oder Xi Jinping (China). Jede Option folgt einer theoretischen Logik. Die Rückmeldung zeigt, wie beide Theorien deine Entscheidung deuten würden.</p>
+            </div>
+
+            <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 sm:p-10 shadow-xl">
+                <div id="sim-step-role" class="space-y-6">
+                    <h3 class="font-serif text-2xl font-bold text-white text-center mb-6">Wähle deine Rolle</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <button onclick="selectRole('trump')" class="bg-slate-900/80 border-2 border-slate-700 hover:border-blue-500 rounded-2xl p-6 text-left transition group">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="bg-blue-500/20 text-blue-400 font-bold text-xs px-3 py-1 rounded-full uppercase">USA</span>
+                                <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-500 shadow-md">
+                                    <img src="gettyimages-2194420718-67d9b4e326598.avif" alt="Donald Trump" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null;this.src='https://placehold.co/150x150/1e293b/ffffff?text=DT'">
+                                </div>
+                            </div>
+                            <h4 class="font-serif text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition">Donald Trump</h4>
+                            <p class="text-slate-400 text-sm leading-relaxed">Präsident einer Großmacht, deren Vorrangstellung im Indopazifik herausgefordert wird.</p>
+                        </button>
+                        <button onclick="selectRole('xi')" class="bg-slate-900/80 border-2 border-slate-700 hover:border-red-500 rounded-2xl p-6 text-left transition group">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="bg-red-500/20 text-red-400 font-bold text-xs px-3 py-1 rounded-full uppercase">China</span>
+                                <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-red-500 shadow-md">
+                                    <img src="Xi_Jinping_in_July_2024_(cropped).jpg" alt="Xi Jinping" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null;this.src='https://placehold.co/150x150/1e293b/ffffff?text=XJ'">
+                                </div>
+                            </div>
+                            <h4 class="font-serif text-xl font-bold text-white mb-2 group-hover:text-red-400 transition">Xi Jinping</h4>
+                            <p class="text-slate-400 text-sm leading-relaxed">Staats- und Parteichef einer aufsteigenden Macht, für die Taiwan eine Frage nationaler Souveränität ist.</p>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="sim-game-area" class="hidden space-y-6">
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/70 p-4 rounded-2xl border border-slate-700 text-sm">
+                        <div class="flex items-center gap-3">
+                            <span id="sim-role-badge" class="px-3 py-1 rounded-full font-bold text-xs bg-blue-500/20 text-blue-400">Rolle</span>
+                            <span id="sim-stage-indicator" class="text-slate-400">Szenario 1 von 3</span>
+                        </div>
+                        <div>Stabilität <span id="sim-stability" class="font-bold text-emerald-400">75 %</span></div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-6 sm:p-8">
+                        <h4 id="sim-scenario-title" class="font-serif text-xl sm:text-2xl font-bold text-white mb-4"></h4>
+                        <p id="sim-scenario-desc" class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6"></p>
+                        <div id="sim-options-container" class="space-y-4"></div>
+                    </div>
+                    <div id="sim-feedback-box" class="hidden bg-slate-900 border border-slate-700 rounded-2xl p-6">
+                        <h5 id="sim-feedback-title" class="font-bold text-base mb-2 text-amber-400"></h5>
+                        <p id="sim-feedback-text" class="text-slate-300 text-sm leading-relaxed mb-6"></p>
+                        <button onclick="nextSimScenario()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition text-sm">Nächster Schritt &rarr;</button>
+                    </div>
+                </div>
+
+                <div id="sim-results-area" class="hidden text-center space-y-6">
+                    <div class="w-16 h-16 bg-amber-400/20 text-amber-400 rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto">📊</div>
+                    <h3 class="font-serif text-2xl font-bold text-white">Simulation abgeschlossen</h3>
+                    <p id="sim-results-summary" class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed"></p>
+                    <div class="bg-slate-900 p-6 rounded-2xl border border-slate-700 max-w-md mx-auto text-left space-y-2">
+                        <div class="text-xs uppercase font-bold text-slate-400 mb-2">Deine Entscheidungslogik</div>
+                        <div class="flex justify-between text-sm"><span class="text-blue-400">Neorealistisch</span><span id="sim-score-neo" class="font-bold">0</span></div>
+                        <div class="flex justify-between text-sm"><span class="text-orange-300">Konstruktivistisch, kooperativ</span><span id="sim-score-konkoop" class="font-bold">0</span></div>
+                        <div class="flex justify-between text-sm"><span class="text-orange-500">Konstruktivistisch, konfrontativ</span><span id="sim-score-konkonf" class="font-bold">0</span></div>
+                    </div>
+                    <p class="text-slate-400 text-xs max-w-xl mx-auto leading-relaxed">Die Stabilitätswerte sind eine didaktische Vereinfachung und keine Prognose. Der Simulator lässt Staaten wie Personen handeln und vereinfacht damit genau so, wie es der reflexive Konstruktivismus am Staatskonstruktivismus kritisiert (Weller 2005: 46).</p>
+                    <button onclick="resetSimulator()" class="bg-slate-700 hover:bg-slate-600 text-white font-medium px-6 py-3 rounded-xl transition text-sm">Simulation neu starten</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REFLEXION -->
+    <section id="reflexion" class="py-20 bg-white border-t border-slate-200">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Reflexion</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-900 mt-4">Was sich in meinem Blick verändert hat</h2>
+            </div>
+            <div class="prose-text text-base sm:text-lg">
+                <p>Zu Beginn des Seminars habe ich den Neorealismus vor allem als pessimistische und den Konstruktivismus als optimistische Theorie wahrgenommen. Diese Einteilung fand sich auch noch in einer früheren Version meines Simulators, in der jede kooperative Entscheidung als konstruktivistisch und jede harte Entscheidung als neorealistisch galt. Die Arbeit mit den Grundlagentexten hat mir gezeigt, dass diese Gegenüberstellung zu einfach ist. Auch Feindschaft ist konstruiert, und auch der Neorealismus kennt Bedingungen für Stabilität.</p>
+                <p>Besonders herausfordernd war für mich der Text zum reflexiven Konstruktivismus. Er hat mich dazu gebracht, meine eigene Darstellung kritischer zu betrachten. Eine Website, die Theorien in Rollen wie „Trump“ und „Xi“ übersetzt, vereinfacht zwangsläufig und schreibt Staaten genau jene personalen Eigenschaften zu, die im Text kritisiert werden (Weller 2005: 46, 51). Ich habe mich dennoch für diese Form entschieden, weil sie die Theorien erfahrbar macht, und weise im Simulator bewusst auf diese Grenze hin.</p>
+                <p>Für mein weiteres Studium nehme ich mit, dass die Wahl einer Theorie schon festlegt, was ich an einem Konflikt überhaupt sehe. In künftigen Arbeiten möchte ich meine theoretische Perspektive deshalb offenlegen und ihre blinden Flecken mitdenken.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAZIT -->
+    <section id="fazit" class="py-20 bg-slate-100 border-t border-slate-200">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-600 bg-white px-3 py-1 rounded-full border border-slate-200">Fazit</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-900 mt-4">Antwort auf die Leitfrage</h2>
+            </div>
+            <div class="prose-text text-base sm:text-lg">
+                <p>Die Leitfrage dieses Portfolios lautete, wie Neorealismus und Konstruktivismus Konflikt und Kooperation zwischen Staaten erklären. Der Neorealismus erklärt Konflikte aus der Struktur des internationalen Systems. Anarchie erzeugt Unsicherheit, Unsicherheit erzeugt Machtstreben, und Sicherheitsdilemma und Machtgleichgewicht halten diese Konkurrenz dauerhaft in Gang (Schimmelfennig 2017: 87f). Kooperation ist aus dieser Sicht möglich, bleibt aber instabil und an Machtkonzentration gebunden.</p>
+                <p>Der Konstruktivismus erklärt Konflikt und Kooperation dagegen aus den Deutungen, mit denen Akteure ihre Welt konstruieren. Er macht verständlich, warum dieselbe materielle Lage zu ganz unterschiedlichen Politiken führen kann, und rechnet mit grundlegendem Wandel. In seiner reflexiven Form erinnert er zudem daran, dass auch wissenschaftliche Analysen solche Deutungen mitprägen (Weller 2005: 57f).</p>
+                <p>Am Beispiel Taiwan zeigt sich, dass beide Theorien unterschiedliche Seiten desselben Konflikts sichtbar machen. Der Neorealismus erklärt den Druck, der aus der Machtverschiebung im Indopazifik entsteht. Der Konstruktivismus erklärt, warum die Taiwanfrage mit so starken Identitäten verknüpft ist, dass Kompromisse schwerfallen. Eine überzeugende Analyse braucht deshalb beide Perspektiven und sollte offenlegen, aus welcher sie gerade argumentiert.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- LITERATUR -->
+    <section id="literatur" class="py-20 bg-white border-t border-slate-200">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-serif text-3xl font-bold text-slate-900 mb-8 text-center">Literatur</h2>
+            <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                <p class="pl-6 -indent-6">Schimmelfennig, Frank 2017: Unsicherheit und Macht. Der Realismus, in: ders.: Internationale Politik, 5., aktualisierte Aufl., Paderborn, 67–88.</p>
+                <p class="pl-6 -indent-6">Weller, Christoph 2005: Perspektiven eines reflexiven Konstruktivismus für die Internationalen Beziehungen, in: Ulbert, Cornelia/Weller, Christoph (Hrsg.): Konstruktivistische Analysen der internationalen Politik, Wiesbaden, 35–64.</p>
+            </div>
+            <h3 class="font-bold text-slate-900 mt-10 mb-4 text-sm uppercase tracking-wider">Sekundär zitiert</h3>
+            <div class="space-y-3 text-sm text-slate-500 leading-relaxed">
+                <p class="pl-6 -indent-6">Adler, Emanuel/Barnett, Michael 1998: A Framework for the Study of Security Communities, in: dies. (Hrsg.): Security Communities, Cambridge, 29–65 (zit. n. Weller 2005).</p>
+                <p class="pl-6 -indent-6">Berger, Peter L./Luckmann, Thomas 1980: Die gesellschaftliche Konstruktion der Wirklichkeit. Eine Theorie der Wissenssoziologie, 5. Aufl., Frankfurt a.M. (zit. n. Weller 2005).</p>
+                <p class="pl-6 -indent-6">Waltz, Kenneth N. 1979: Theory of International Politics, Reading, Mass. (zit. n. Schimmelfennig 2017).</p>
+                <p class="pl-6 -indent-6">Wendt, Alexander 1992: Anarchy is What States Make of It. The Social Construction of Power Politics, in: International Organization 46: 2, 391–425 (zit. n. Weller 2005).</p>
+            </div>
+            <h3 class="font-bold text-slate-900 mt-10 mb-4 text-sm uppercase tracking-wider">Bildnachweise</h3>
+            <div class="space-y-3 text-sm text-slate-500 leading-relaxed">
+                <p>Poster Neorealismus. Eigene Darstellung.</p>
+                <p>Xi Jinping (Juli 2024). Wikimedia Commons, Lizenz und Urheber:in ergänzen.</p>
+                <p>Donald Trump. Bildquelle und Lizenz ergänzen.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+            <span class="text-white font-serif">TheorieVergleich</span>
+            <p>E-Portfolio · Einführung in Theorien der Konfliktforschung · SoSe 2026</p>
+        </div>
+    </footer>
+
+    <script>
+        /* ---------- Tabs ---------- */
+        function switchTab(targetId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+                btn.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+            });
+            const activeBtn = document.querySelector(`[data-target="${targetId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+                activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+            }
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            const target = document.getElementById(`content-${targetId}`);
+            if (target) target.classList.remove('hidden');
+        }
+
+        /* ---------- Matrix ---------- */
+        const matrixData = [
+            ['Theoretische Basis', 'Rationalismus, Materialismus', 'Sozialtheorie und Wissenssoziologie (Berger/Luckmann)'],
+            ['Natur der Anarchie', 'Konstante Struktur mit Zwang zur Selbsthilfe', 'Sozial konstruiert, „what states make of it“'],
+            ['Akteure', 'Einheitliche, zweckrationale Staaten', 'Staaten, gesellschaftliche Gruppen, NGOs, epistemic communities'],
+            ['Interessen', 'Aus der Struktur abgeleitet, vor allem Sicherheit und Macht', 'Entstehen aus Identitäten, Normen und Deutungen'],
+            ['Kooperation', 'Instabil, am ehesten unter einem Hegemon', 'Möglich, wenn sich geteilte Erwartungen und Identitäten bilden'],
+            ['Wandel', 'Stationäre Hegemoniezyklen ohne Fortschritt', 'Wandel durch veränderte Praxis und Deutungen'],
+            ['Rolle der Wissenschaft', 'Beschreibt eine gegebene Realität', 'Ist selbst Teil der Konstruktion von Wirklichkeit (reflexive Variante)']
+        ];
+        document.getElementById('matrix-rows').innerHTML = matrixData.map(r => `
+            <div class="grid md:grid-cols-3 gap-2 md:gap-0 p-5 sm:p-6 hover:bg-slate-50 transition">
+                <div class="font-semibold text-slate-800">${r[0]}</div>
+                <div class="text-slate-600"><span class="md:hidden text-xs font-semibold text-blue-600 block">Neorealismus</span>${r[1]}</div>
+                <div class="text-slate-600"><span class="md:hidden text-xs font-semibold text-orange-600 block">Konstruktivismus</span>${r[2]}</div>
+            </div>`).join('');
+
+        /* ---------- Quiz ---------- */
+        const quizData = [
+            {
+                question: "„Staaten müssen selbst für ihre Sicherheit sorgen, weil im anarchischen System niemand anderes ihnen Schutz garantiert.“",
+                answer: "neo",
+                explanation: "Das ist das Selbsthilfeprinzip des Neorealismus. Ohne übergeordnete Instanz ist jeder Staat auf die eigene Macht angewiesen (Schimmelfennig 2017: 71)."
+            },
+            {
+                question: "„Ob Atomwaffen als existenzielle Bedrohung gelten, hängt davon ab, wem sie gehören und wie wir diesen Staat sehen.“",
+                answer: "kon",
+                explanation: "Der Konstruktivismus betont, dass materielle Faktoren erst durch ihre Deutung politisch wirksam werden. Was als Bedrohung gilt, ist oft umstritten (Weller 2005: 35)."
+            },
+            {
+                question: "„Zwei Staaten, die nur ihren Status quo sichern wollen, können trotzdem in einen Rüstungswettlauf geraten.“",
+                answer: "neo",
+                explanation: "Das beschreibt das Sicherheitsdilemma. Unter Unsicherheit deuten beide Seiten defensiv gemeinte Maßnahmen als Angriffsvorbereitung (Schimmelfennig 2017: 80f)."
+            },
+            {
+                question: "„Die tiefe Feindschaft zwischen zwei Staaten ist kein Naturzustand, sondern wurde durch jahrzehntelange Praxis und Feindbilder hergestellt.“",
+                answer: "kon",
+                explanation: "Eine typische Falle. Auch Konflikt und Feindschaft sind aus konstruktivistischer Sicht Konstruktionen. Der Konstruktivismus ist keine reine Friedenstheorie (Weller 2005: 49)."
+            },
+            {
+                question: "„Frieden ist am wahrscheinlichsten, wenn ein Hegemon so überlegen ist, dass niemand ihn herausfordert.“",
+                answer: "neo",
+                explanation: "Auch der Neorealismus kennt Bedingungen für Frieden. Hohe Machtkonzentration mildert die Folgen der Anarchie (Schimmelfennig 2017: 76, 87)."
+            },
+            {
+                question: "„Auch politikwissenschaftliche Analysen prägen mit, wie eine Gesellschaft internationale Politik wahrnimmt.“",
+                answer: "kon",
+                explanation: "Das ist der Kern des reflexiven Konstruktivismus. Wissenschaft liefert Deutungsangebote, die selbst in die gesellschaftliche Konstruktion der Wirklichkeit eingehen (Weller 2005: 39, 53f)."
+            }
+        ];
+        const theoryLabel = { neo: 'Neorealismus', kon: 'Konstruktivismus' };
+        let currentQuestionIndex = 0, score = 0, answered = false;
+
+        function loadQuestion() {
+            answered = false;
+            const q = quizData[currentQuestionIndex];
+            document.getElementById('question-progress').innerText = `Frage ${currentQuestionIndex + 1} von ${quizData.length}`;
+            document.getElementById('quiz-score').innerText = `Punkte: ${score}`;
+            document.getElementById('question-text').innerText = q.question;
+            const oc = document.getElementById('options-container');
+            oc.innerHTML = '';
+            ['neo', 'kon'].forEach(key => {
+                const btn = document.createElement('button');
+                btn.dataset.theory = key;
+                btn.className = "p-4 rounded-2xl border border-slate-200 bg-white font-medium text-slate-700 hover:border-blue-500 hover:bg-blue-50/50 transition text-left";
+                btn.innerText = theoryLabel[key];
+                btn.onclick = () => selectOption(key, btn);
+                oc.appendChild(btn);
+            });
+            document.getElementById('explanation-box').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function selectOption(selected, selectedButton) {
+            if (answered) return;
+            answered = true;
+            const q = quizData[currentQuestionIndex];
+            document.querySelectorAll('#options-container button').forEach(btn => {
+                btn.disabled = true;
+                if (btn.dataset.theory === q.answer) btn.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+                else if (btn === selectedButton) btn.classList.add('border-rose-500', 'bg-rose-50', 'text-rose-900');
+            });
+            const correct = selected === q.answer;
+            if (correct) score++;
+            document.getElementById('quiz-score').innerText = `Punkte: ${score}`;
+            const t = document.getElementById('explanation-title');
+            t.innerText = correct ? 'Richtig!' : 'Leider falsch.';
+            t.className = correct ? 'font-bold text-base mb-1 text-emerald-700' : 'font-bold text-base mb-1 text-rose-700';
+            document.getElementById('explanation-text').innerText = q.explanation;
+            document.getElementById('explanation-box').classList.remove('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) loadQuestion();
+            else {
+                document.getElementById('quiz-container').classList.add('hidden');
+                document.getElementById('result-card').classList.remove('hidden');
+                document.getElementById('result-text').innerText = `Du hast ${score} von ${quizData.length} Fragen richtig beantwortet.`;
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0; score = 0;
+            document.getElementById('result-card').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        /* ---------- Simulator ----------
+           type: 'neo' = neorealistische Logik
+                 'konkoop' = konstruktivistische Logik, kooperative Deutung
+                 'konkonf' = konstruktivistische Logik, konfrontative Deutung (Identität, Feindbild) */
+        const typeTitle = {
+            neo: 'Neorealistische Logik',
+            konkoop: 'Konstruktivistische Logik (kooperative Deutung)',
+            konkonf: 'Konstruktivistische Logik (konfrontative Deutung)'
+        };
+        const typeColor = { neo: 'text-blue-400', konkoop: 'text-orange-300', konkonf: 'text-orange-500' };
+
+        const simScenarios = {
+            trump: [
+                {
+                    title: 'Szenario 1 · Großmanöver in der Taiwanstraße',
+                    description: 'Die chinesische Marine hält großangelegte Manöver rund um Taiwan ab. Deine Berater drängen auf eine schnelle Reaktion.',
+                    options: [
+                        { text: 'Eine Flugzeugträgergruppe in die Region verlegen und Präsenz zeigen, ohne die Manöver direkt zu stören.', type: 'neo', stabilityChange: -5,
+                          feedback: 'Neorealistisch gedacht stellst du ein Gleichgewicht her, bevor sich die Machtverhältnisse zu deinen Ungunsten verschieben (Schimmelfennig 2017: 81f). Konstruktivistisch hängt die Wirkung davon ab, wie Beijing das Signal deutet. Liest es darin die Bestätigung eines Feindbilds, verfestigt sich genau die Rivalität, die du eindämmen willst.' },
+                        { text: 'Öffentlich betonen, dass die USA China als Konkurrenten mit gemeinsamen Interessen sehen und nicht als Feind, und ein Gespräch der Militärführungen anbieten.', type: 'konkoop', stabilityChange: +5,
+                          feedback: 'Du setzt bei den wechselseitigen Deutungen an. Rollen wie Feind oder Rivale sind nicht vorgegeben, sondern entstehen in der Interaktion (Wendt 1992, zit. n. Weller 2005: 44). Neorealistisch bleibt das riskant, weil Beteuerungen über Absichten unter Anarchie nicht überprüfbar sind (Schimmelfennig 2017: 80f).' },
+                        { text: 'Strafzölle verhängen und die Manöver als Beweis darstellen, dass China die „freie Welt“ bedroht.', type: 'konkonf', stabilityChange: -15,
+                          feedback: 'Auch das folgt einer konstruktivistisch beschreibbaren Logik, nur mit umgekehrtem Vorzeichen. Du ziehst eine Identitätsgrenze zwischen „freier Welt“ und China und machst damit Feindschaft zur Grundlage deiner Politik. Neorealistisch betrachtet ändern Zölle zudem nichts am militärischen Kräfteverhältnis in der Taiwanstraße.' }
+                    ]
+                },
+                {
+                    title: 'Szenario 2 · Taipeh bittet um Waffen',
+                    description: 'Die Regierung Taiwans bittet um moderne Raketenabwehrsysteme und weitere Rüstungsgüter.',
+                    options: [
+                        { text: 'Defensive Systeme liefern, aber auf Angriffswaffen verzichten.', type: 'neo', stabilityChange: 0,
+                          feedback: 'Du nutzt ein Kernargument des Neorealismus. Technologie, die die Defensive stärkt, verringert die Unsicherheit im System (Schimmelfennig 2017: 77f). Beijing kann aber auch defensive Waffen als Bedrohung wahrnehmen. Genau darin liegt das Sicherheitsdilemma (Schimmelfennig 2017: 80f).' },
+                        { text: 'Die Lieferungen massiv ausweiten, damit Taiwan dauerhaft überlegen bleibt.', type: 'neo', stabilityChange: -15,
+                          feedback: 'Das entspricht dem offensiven Realismus, nach dem Staaten ihre Macht maximieren (Schimmelfennig 2017: 72). Der Mechanismus des Machtgleichgewichts lässt allerdings erwarten, dass China mit eigener Aufrüstung antwortet (Schimmelfennig 2017: 81f).' },
+                        { text: 'Die Lieferung aufschieben und zuerst vertrauensbildende Maßnahmen mit Beijing und Taipeh vereinbaren.', type: 'konkoop', stabilityChange: +5,
+                          feedback: 'Du setzt darauf, dass sich Erwartungen durch wiederholte Interaktion verändern lassen. Ob das gelingt, hängt davon ab, welche Deutung sich in den beteiligten Gesellschaften durchsetzt, denn Bedrohungswahrnehmungen sind umstritten (Weller 2005: 35). Neorealistisch riskierst du, dass China die Zurückhaltung als Schwäche ausnutzt.' }
+                    ]
+                },
+                {
+                    title: 'Szenario 3 · Die Frage nach der Unabhängigkeit',
+                    description: 'Beijing verlangt von dir eine klare Erklärung gegen eine Unabhängigkeit Taiwans.',
+                    options: [
+                        { text: 'Bei der strategischen Mehrdeutigkeit bleiben und weder zusagen noch ausschließen.', type: 'neo', stabilityChange: 0,
+                          feedback: 'Neorealistisch hältst du dir Handlungsspielraum offen und vermeidest Festlegungen, die deine Position schwächen. Konstruktivistisch fällt auf, dass auch Mehrdeutigkeit eine geteilte Bedeutung hat. Beide Seiten haben sich über Jahrzehnte an diese Formel gewöhnt, und gerade diese gemeinsame Erwartung stabilisiert den Status quo.' },
+                        { text: 'Eine gemeinsame Erklärung vorschlagen, die an frühere Vereinbarungen anknüpft und beide Seiten auf eine friedliche Lösung verpflichtet.', type: 'konkoop', stabilityChange: +10,
+                          feedback: 'Du knüpfst an geteilte Normen an und stärkst eine gemeinsame Deutung der Lage. Aus neorealistischer Sicht bleibt offen, ob eine solche Erklärung hält, sobald sich die Machtverhältnisse verschieben (Schimmelfennig 2017: 73f).' },
+                        { text: 'Taiwan öffentlich als „Bollwerk der Demokratie“ bezeichnen, das die USA um jeden Preis verteidigen.', type: 'konkonf', stabilityChange: -10,
+                          feedback: 'Du machst Taiwan zum Teil der amerikanischen Identität. Das erhöht den Einsatz, weil ein Rückzug nun als Verrat an den eigenen Werten gelten würde. Beijing wiederum deutet die Aussage als Angriff auf seine nationale Identität.' }
+                    ]
+                }
+            ],
+            xi: [
+                {
+                    title: 'Szenario 1 · Druck aus der Armee',
+                    description: 'Nach einem Besuch taiwanischer Politiker in Washington fordern Teile der Armeeführung eine deutliche Reaktion.',
+                    options: [
+                        { text: 'Großmanöver rund um Taiwan anordnen, um Stärke zu zeigen und die USA abzuschrecken.', type: 'neo', stabilityChange: -10,
+                          feedback: 'Neorealistisch betreibst du Gleichgewichtspolitik gegenüber den USA. Im Sicherheitsdilemma werden Washington und Taipeh die Manöver jedoch als offensive Vorbereitung deuten und selbst aufrüsten (Schimmelfennig 2017: 80f).' },
+                        { text: 'Die Manöver als Pflicht gegenüber der Geschichte der Nation darstellen, die die Wiedervereinigung verlangt.', type: 'konkonf', stabilityChange: -10,
+                          feedback: 'Hier leitet sich dein Interesse aus einer nationalen Identitätserzählung ab und nicht aus einem Machtkalkül. Konstruktivistisch erklärt das, warum die Frage kaum verhandelbar erscheint. Wer Taiwan als Teil der eigenen Geschichte deutet, kann Zugeständnisse nur schwer als rationalen Kompromiss verbuchen.' },
+                        { text: 'Auf Manöver verzichten und stattdessen Austauschprogramme und Handelserleichterungen für Taiwan anbieten.', type: 'konkoop', stabilityChange: +5,
+                          feedback: 'Du versuchst, die Deutungen in der taiwanischen Gesellschaft zu beeinflussen. Diese Konstruktionen sind aber umstritten und nicht von außen steuerbar (Weller 2005: 48). Neorealistisch betrachtet könnten die USA den Verzicht als Schwäche auslegen.' }
+                    ]
+                },
+                {
+                    title: 'Szenario 2 · US-Waffenlieferungen',
+                    description: 'Washington hat Taiwan neue Abwehrsysteme geliefert.',
+                    options: [
+                        { text: 'Marine und Raketenstreitkräfte beschleunigt ausbauen.', type: 'neo', stabilityChange: -5,
+                          feedback: 'Das ist internes balancing. Du gleichst einen Machtgewinn der Gegenseite durch eigene Ressourcen aus, was der Neorealismus als erste Wahl ansieht (Schimmelfennig 2017: 81).' },
+                        { text: 'Russland und weitere Partner für eine engere militärische Abstimmung gewinnen.', type: 'neo', stabilityChange: -10,
+                          feedback: 'Das ist externes balancing. Neorealistisch gilt es nur als zweitbeste Strategie, weil Bündnisse Unsicherheit und Autonomieverluste mit sich bringen (Schimmelfennig 2017: 81f).' },
+                        { text: 'Die USA in einer Grundsatzrede als Partner mit gemeinsamer Verantwortung für Asien ansprechen und ein neues Dialogformat anbieten.', type: 'konkoop', stabilityChange: +5,
+                          feedback: 'Du bietest eine alternative Rollenzuschreibung an. Ob sie trägt, hängt davon ab, ob sie in Washington aufgegriffen wird, denn Deutungen entstehen erst in der Interaktion (Wendt 1992, zit. n. Weller 2005: 44).' }
+                    ]
+                },
+                {
+                    title: 'Szenario 3 · Der Parteitag',
+                    description: 'Auf dem Parteitag steht die Taiwanfrage im Mittelpunkt. Die Welt achtet auf jedes Wort.',
+                    options: [
+                        { text: 'Die militärische Option betonen, weil nur Stärke Washington von einer Einmischung abhält.', type: 'neo', stabilityChange: -10,
+                          feedback: 'Neorealistisch setzt du auf Abschreckung durch Zwangsmacht, die der Realismus als zentrales Mittel internationaler Politik sieht (Schimmelfennig 2017: 83). Die Gegenseite wird allerdings mit eigener Abschreckung reagieren.' },
+                        { text: 'Die Wiedervereinigung als historische Mission beschwören, von der kein Kompromiss abweichen darf.', type: 'konkonf', stabilityChange: -10,
+                          feedback: 'Du verankerst die Taiwanfrage noch tiefer in der nationalen Identität. Konstruktivistisch verengt das den eigenen Spielraum, weil jede spätere Annäherung als Abkehr von diesem Selbstbild erscheinen würde.' },
+                        { text: 'Die Wiedervereinigung als langfristigen, friedlichen Prozess über Generationen beschreiben.', type: 'konkoop', stabilityChange: +10,
+                          feedback: 'Du deutest dieselbe Identität so, dass sie Geduld statt Eile verlangt. Das zeigt, dass Identitäten nicht auf eine Politik festlegen, sondern unterschiedlich ausgelegt werden können.' }
+                    ]
+                }
+            ]
+        };
+
+        let simState = { role: null, stage: 0, stability: 75, counts: { neo: 0, konkoop: 0, konkonf: 0 } };
+
+        function selectRole(role) {
+            simState = { role, stage: 0, stability: 75, counts: { neo: 0, konkoop: 0, konkonf: 0 } };
+            document.getElementById('sim-step-role').classList.add('hidden');
+            document.getElementById('sim-game-area').classList.remove('hidden');
+            const badge = document.getElementById('sim-role-badge');
+            if (role === 'trump') {
+                badge.innerText = 'Rolle · Donald Trump (USA)';
+                badge.className = 'px-3 py-1 rounded-full font-bold text-xs bg-blue-500/20 text-blue-400';
+            } else {
+                badge.innerText = 'Rolle · Xi Jinping (China)';
+                badge.className = 'px-3 py-1 rounded-full font-bold text-xs bg-red-500/20 text-red-400';
+            }
+            loadSimScenario();
+        }
+
+        function updateStability() {
+            const el = document.getElementById('sim-stability');
+            el.innerText = `${simState.stability} %`;
+            el.className = 'font-bold ' + (simState.stability >= 70 ? 'text-emerald-400' : simState.stability >= 45 ? 'text-amber-400' : 'text-rose-400');
+        }
+
+        function loadSimScenario() {
+            const scenarios = simScenarios[simState.role];
+            const s = scenarios[simState.stage];
+            document.getElementById('sim-stage-indicator').innerText = `Szenario ${simState.stage + 1} von ${scenarios.length}`;
+            updateStability();
+            document.getElementById('sim-scenario-title').innerText = s.title;
+            document.getElementById('sim-scenario-desc').innerText = s.description;
+            const oc = document.getElementById('sim-options-container');
+            oc.innerHTML = '';
+            s.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-4 rounded-xl bg-slate-800 border border-slate-700 hover:border-blue-500 hover:bg-slate-700/60 transition text-sm text-slate-200';
+                btn.innerText = opt.text;
+                btn.onclick = () => makeSimDecision(opt);
+                oc.appendChild(btn);
+            });
+            document.getElementById('sim-feedback-box').classList.add('hidden');
+            oc.classList.remove('hidden');
+        }
+
+        function makeSimDecision(opt) {
+            simState.counts[opt.type]++;
+            simState.stability = Math.max(10, Math.min(100, simState.stability + opt.stabilityChange));
+            updateStability();
+            document.getElementById('sim-options-container').classList.add('hidden');
+            const title = document.getElementById('sim-feedback-title');
+            title.innerText = typeTitle[opt.type];
+            title.className = 'font-bold text-base mb-2 ' + typeColor[opt.type];
+            document.getElementById('sim-feedback-text').innerText = opt.feedback;
+            document.getElementById('sim-feedback-box').classList.remove('hidden');
+        }
+
+        function nextSimScenario() {
+            simState.stage++;
+            if (simState.stage < simScenarios[simState.role].length) loadSimScenario();
+            else showSimResults();
+        }
+
+        function showSimResults() {
+            document.getElementById('sim-game-area').classList.add('hidden');
+            document.getElementById('sim-results-area').classList.remove('hidden');
+            const c = simState.counts;
+            document.getElementById('sim-score-neo').innerText = c.neo;
+            document.getElementById('sim-score-konkoop').innerText = c.konkoop;
+            document.getElementById('sim-score-konkonf').innerText = c.konkonf;
+            const kon = c.konkoop + c.konkonf;
+            let summary;
+            if (c.neo > kon) {
+                summary = 'Du hast überwiegend neorealistisch entschieden und dich an Machtverhältnissen, Abschreckung und Gleichgewicht orientiert.';
+            } else if (kon > c.neo) {
+                summary = 'Du hast überwiegend nach konstruktivistischer Logik entschieden und dich an Deutungen, Rollen und Identitäten orientiert.';
+            } else {
+                summary = 'Du hast neorealistische und konstruktivistische Überlegungen ausgewogen verbunden.';
+            }
+            if (c.konkonf > 0) {
+                summary += ' Deine konfrontativen Entscheidungen zeigen, dass konstruktivistisches Denken nicht automatisch zu Frieden führt. Auch Feindbilder und Identitätsgrenzen sind Konstruktionen.';
+            }
+            summary += ` Die Stabilität liegt am Ende bei ${simState.stability} %.`;
+            document.getElementById('sim-results-summary').innerText = summary;
+        }
+
+        function resetSimulator() {
+            document.getElementById('sim-results-area').classList.add('hidden');
+            document.getElementById('sim-step-role').classList.remove('hidden');
+        }
+
+        window.addEventListener('DOMContentLoaded', loadQuestion);
+    </script>
+</body>
+</html>
